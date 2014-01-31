@@ -5,7 +5,18 @@ A simple echo server
 """
 
 import socket
-secKey = 'coolio123'
+from time import localtime, strftime
+
+
+def time():
+    return strftime("%a, %d %b %Y %H:%M:%S", localtime())
+
+def log(m):
+    t = time()
+    print t + ': ' + m
+
+
+secKey = 'asdfadf'
 host = ''
 port = 61845
 backlog = 5
@@ -23,8 +34,8 @@ while 1:
             print 'secret message received!'
             client.send('all your base are belong to us!')
         else:
-            print 'client says: ' + data + ' <end>'
-            client.send('message received, thank you')
+            log(data)
+            client.send('message received at ' + time())
     client.close()
 print 'server shut down!'
 
