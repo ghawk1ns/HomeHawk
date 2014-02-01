@@ -5,11 +5,11 @@ A simple echo server
 """
 
 import socket
-from time import localtime, strftime
+from time import gmtime, strftime
 
 
 def time():
-    return strftime("%a, %d %b %Y %H:%M:%S", localtime())
+    return strftime("%a, %d %b %Y %H:%M:%S", gmtime())
 
 def log(m):
     t = time()
