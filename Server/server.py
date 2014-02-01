@@ -5,22 +5,18 @@ A simple echo server
 """
 
 import socket
-from time import gmtime, strftime
+import configuration
+from auxFunctions import time, log
 
-
-def time():
-    return strftime("%a, %d %b %Y %H:%M:%S", gmtime())
-
-def log(m):
-    t = time()
-    print t + ': ' + m
-
-
-secKey = 'asdfadf'
-host = ''
-port = 61845
-backlog = 5
-size = 4096
+#
+secretKey = configuration.secretKey
+#set host = ''
+host = configuration.host
+port = configuration.port
+#5 should be just fine
+backlog = configuration.backlog
+#use 1024 to start if you're unfamiliar
+size = configuration.size
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((host, port))
 s.listen(backlog)
@@ -30,11 +26,13 @@ while 1:
     data = client.recv(size)
     if data:
         data = data.strip()
-        if data == secKey:
+        if data == secretKey:
             print 'secret message received!'
             client.send('all your base are belong to us!')
         else:
-            log(data)
+            for x in data:
+                print x
+            #log(data)
             client.send('message received at ' + time())
     client.close()
 print 'server shut down!'

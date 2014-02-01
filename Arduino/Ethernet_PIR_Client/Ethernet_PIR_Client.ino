@@ -19,6 +19,7 @@ EthernetClient client;
 /////////////////////////////////////////////////////////////////////////////////////
 //    PIR VARS  //
 //////////////////
+byte bootM[] = { 0xDE, 0xAD, 0xDE, 0xAD};
 //the time we give the sensor to calibrate (10-60 secs according to the datasheet)
 int calibrationTime = 30;        
 //the time when the sensor outputs a low impulse
@@ -35,7 +36,7 @@ int pirPin = 2;
 // misc //
 /////////
 //check in every 5 mins
-unsigned long checkIn = (10000);
+unsigned long checkIn = (300000);
 unsigned long lastCheck = 0;
 int ledPin = 13;
 /////////////////////////////////////////////////////////////////////////////////////
@@ -58,20 +59,6 @@ void loop()
   readBuffer();
   //check in or check sensors
   
-  if (millis()%1000 == 0){
-  Serial.print("millis: ");
-  Serial.println(millis());
-  
-  Serial.print("lastCheck: ");
-  Serial.println(lastCheck);
-  
-  Serial.println("checkIn: ");
-    Serial.println(checkIn);
-  
-  Serial.print("millis - lastCheck: ");
-  Serial.println(millis() - lastCheck);
-  Serial.println();
-  }
   if(millis() - lastCheck > checkIn){
     lastCheck = millis();
     Serial.println("Checking in with Server");
@@ -122,7 +109,7 @@ boolean connect(){
 //return true if message sent
 void connectAndSend(String _m){
   if (connect()) {
-    client.println(_m);
+    client.write(bootM,sizeof(bootM));
     Serial.println("message sent: " + _m);
   }
   else{
