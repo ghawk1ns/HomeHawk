@@ -54,5 +54,34 @@ User-Data:
         
   ---
 
+###############
+## Database  ##
+###############
+Uses Parse for a backend- easily store/retrieve data and push notifications to users on the system
+  ---
+User: All users on system capable of recieving notifications
+  ---
+Header: single number (0-255) that clients send to validate authenticity (not to be changed)
+
+    header- int
+  ---
+Client: Any device capable to sending sensor data to server
+
+    id: int (0-255) unique to system
+    name: String
+  ---
+Sensor:
+
+    id: int (0-15) unique to client
+  ---
+User-Client:
+
+    pair : relation between a User and Client objects
+  ---
+Client-Sensor:
+
+    pair : relation between a CLient and Sensor objects
+  ---
+
 
 
