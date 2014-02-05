@@ -14,7 +14,7 @@ restAPIKey = 'RC12pLvbmMLXqad12OVOMsK4EaQ8fOBMZj3iC9rx'
 #################
 ## Server info ##
 ##########################################################
-port = 61845
+port = 61846
 size = 4096
 backlog = 5
 secretKey = 'coolio123'
