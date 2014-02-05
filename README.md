@@ -29,11 +29,10 @@ Header:
     Notes: 
         - Maybe not needed / not best way to validate authenticity
  ---
-User-Data:
+Client-Id:
 
-    1. User Id | [8-15] : Allows up to 256 unique ids per system
-    2. Client Id | [16-19] : Allows up to 16 different client devices (arduinos, client-side servers, etc) which can have multiple sensors attached to each device
-    3. Sensor Id | [20-23] : Unique Id for a sensor - can dictate how to interpret message
+    1. Client Id | [8-15] : Allows up to 256 unique devices per system
+    2. Sensor Id | [16-19] : Unique Id for a sensor - can dictate how to interpret message
     
     Notes: 
         - Assuming all 0s or all 1s is not valid, 254 possible users can register 14 devices with 14 possible sensors each (devices can have more than one id if it has more than 14 sensors)
