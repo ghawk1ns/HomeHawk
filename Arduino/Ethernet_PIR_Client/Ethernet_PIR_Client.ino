@@ -7,19 +7,18 @@
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-// if you don't want to use DNS (and reduce your sketch size)
 // use the numeric IP instead of the name for the server:
-IPAddress server(162,243,215,70);
+//IPAddress server(162,243,215,70);
+IPAddress server(10,0,0,7);
 // Set the static IP address to use if the DHCP fails to assign
 IPAddress ip(192, 168, 0, 177);
-int port = 61845;
+int port = 61846;
 // Initialize the Ethernet client library
 // with the IP address and port of the server
 EthernetClient client;
 /////////////////////////////////////////////////////////////////////////////////////
 //    PIR VARS  //
 //////////////////
-byte bootM[] = { 0xDE, 0xAD, 0xDE, 0xAD};
 //the time we give the sensor to calibrate (10-60 secs according to the datasheet)
 int calibrationTime = 30;        
 //the time when the sensor outputs a low impulse
@@ -33,12 +32,45 @@ boolean takeCalmTime;
 //the digital pin connected to the PIR sensor's output
 int pirPin = 2;
 /////////////////////////////////////////////////////////////////////////////////////
-// misc //
-/////////
+// client info //
+/////////////////
 //check in every 5 mins
 unsigned long checkIn = (300000);
 unsigned long lastCheck = 0;
 int ledPin = 13;
+/////////////////////////////////////////////////////////////////////////////////////
+// Message Protocol //
+//////////////////////
+int headerLength = 8;
+int clientIdLength = 8;
+int sensorIdLength = 4;
+int sensorMessageLength = 12;
+int messageLength = headerLength+clientIdLength+sensorIdLength+sensorMessageLength;
+
+int clientIdStart = 8;
+int sensorIdStart = 16;
+int sensorMessageStart = 20;
+int sensorStateIndex = 21;
+
+//unique to ever system
+//boolean header[] = {1,0,1,0,1,0,1,0};
+//boolean clientId[] = {1,0,1,0,1,0,1,0};
+boolean sensorA[] = {1,0,1,0};
+//boolean sensorData[12];
+boolean message[] = {1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+//for multiple sensors on a client, set sensorId in message
+void setSensorId(boolean _sId[]){
+  for(int i = sensorIdStart; i< sensorIdLength; i++){
+    message[i] = _sId[i-sensorIdStart];
+  }
+}
+//0s out sensor information
+void setCheckIn(){
+  for(int i = sensorIdStart; i < messageLength; i++){
+    message[i] = 0;
+  }
+}
 /////////////////////////////////////////////////////////////////////////////////////
 //initialization
 void setup() {
@@ -47,7 +79,7 @@ void setup() {
   //led setup
   pinMode(ledPin, OUTPUT);
   //configure ethernet and establish connection with server
-  ethernetSetup("Initial Setup");
+  ethernetSetup();
   //callibrate PIR sensor
   pirSetup();
 }
@@ -73,11 +105,11 @@ void loop()
 // Ethernet Controlers //
 /////////////////////////
 //call to reboot ethernet connection
-void reBoot(String _m){
-  ethernetSetup('reBoot: ' + _m);
+void reBoot(){
+  ethernetSetup();
 }
 //connect to ethernet
-void ethernetSetup(String _m){
+void ethernetSetup(){
   boolean complete = false;
   while (!complete){
      // start the Ethernet connection:
@@ -91,7 +123,9 @@ void ethernetSetup(String _m){
     delay(1500);
     complete = connect();
     if(complete){
-      client.println(_m);
+      //try to check in
+      setCheckIn();
+      client.write(message,sizeof(message));
     }
     else{
       //no good, wait one minute and try again
@@ -109,14 +143,41 @@ boolean connect(){
 //return true if message sent
 void connectAndSend(String _m){
   if (connect()) {
-    client.write(bootM,sizeof(bootM));
+    client.write(message,sizeof(message));
     Serial.println("message sent: " + _m);
   }
   else{
     Serial.println("connection not available, try reboot");
-    reBoot(_m);
+    reBoot();
   }
 }
+
+//notify the state of the sensor has changed
+void notifyStateChange(boolean _curState){
+  if (connect()) {
+    message[sensorMessageStart] = 1;
+    message[sensorStateIndex] = _curState;
+    client.write(message,sizeof(message));
+    Serial.println("Message sent to server");
+  }
+  else{
+    Serial.println("connection not available, try reboot");
+    reBoot();
+  }
+}
+//notify the state of the sensor has changed
+void notifyCheckIn(){
+  if (connect()) {
+    setCheckIn();
+    client.write(message,sizeof(message));
+    Serial.println("Check In Message sent to server");
+  }
+  else{
+    Serial.println("connection not available, try reboot");
+    reBoot();
+  }
+}
+
 
 //reads incoming messages from server then disconects 
 void readBuffer(){
@@ -163,7 +224,8 @@ void pirState(){
       Serial.print((millis())/1000);
       Serial.println(" sec"); 
       //send to server
-      connectAndSend("Motion Detected");
+      setSensorId(sensorA);
+      notifyStateChange(true);
       //we sent a message so reset the check in time
       lastCheck = millis();
       delay(50);
@@ -187,7 +249,8 @@ void pirState(){
          Serial.print((millis() - pause)/1000);
          Serial.println(" sec");
          //alert server to have moved back to a calm state
-         connectAndSend("Motion Deceased");
+         setSensorId(sensorA);
+         notifyStateChange(false);
          delay(50);
       }
     }
