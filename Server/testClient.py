@@ -7,12 +7,13 @@ import configuration
 
 s = socket.socket()
 host = socket.gethostname()
-port = configuration.port
+port = 61846
 
 s.connect((host, port))
 
-m = bytearray(0xAD)
+m = '{ "clientId":"Arduino yo","sensorId":"PIR Sensor","sensorData": { "isActive": 1 ,"time":"2:31"} }/n'
 s.send(m)
 
 print s.recv(1024)
-s.close                     # Close the socket when done
+# Close the socket when done
+s.close

@@ -15,8 +15,10 @@ restAPIKey = 'RC12pLvbmMLXqad12OVOMsK4EaQ8fOBMZj3iC9rx'
 ## Server info ##
 ##########################################################
 port = 61846
-size = 4096
+size = pow(2,10)
 backlog = 5
 secretKey = 'coolio123'
 host = ''
+waitTime = 30
+socketTimeout = 20
 ##########################################################
