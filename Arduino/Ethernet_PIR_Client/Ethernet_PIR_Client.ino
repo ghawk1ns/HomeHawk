@@ -48,13 +48,15 @@ String clientId = "RvMQuSPEDk";
 String headerId = "VEo6dnPeff";
 
 String checkInJSON(){
-  return "{\"headerId\":\""+headerId+"\",\"clientId\":\""+clientId+"\",\"checkIn\":1}";
+  return "{'headerId':'"+headerId+"','clientId':'"+clientId+"','checkIn':True}";
 }
 
-String sensorStateChangeJSON(boolean _isActive){
-  return "{\"headerId\":\""+headerId+"\",\"clientId\":\""+clientId+"\",\"sensorId\":\""+sensorId+"\",\"sensorData\":{\"isActive\":"+(String)_isActive+"}}";
+String sensorStateChangeJSON(boolean _isActive, String time){
+  if(_isActive){
+    return "{'headerId':'"+headerId+"','clientId':'"+clientId+"','sensorId':'"+sensorId+"','sensorData':{'isActive':true, time:'"+time+"'}}";
+  }
+    return "{'headerId':'"+headerId+"','clientId':'"+clientId+"','sensorId':'"+sensorId+"','sensorData':{'isActive':false, time:'"+time+"'}}";
 }
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -132,6 +134,7 @@ void ethernetSetup(){
       numTries++;
       //if we fail to reset 
       if(numTries > maxReBootTries){
+        Serial.println("Failed to establish connection, resetting device");
         resetFunc(); 
       } 
       //no good, wait one minute and try again
@@ -143,6 +146,7 @@ void ethernetSetup(){
 //connect with server
 //returns status of connection
 boolean connect(){ 
+ client.stop();
  boolean isConnected = client.connect(server, port);
  if(isConnected){ 
    delay(100);
@@ -162,10 +166,11 @@ void checkInWithServer(){
   }
 }
 
-void notifyStateChange(boolean _isActive){
+void notifyStateChange(boolean _isActive, String time){
+  delay(1500);
   if (connect()) {
     delay(50);
-    String msg = sensorStateChangeJSON(_isActive);
+    String msg = sensorStateChangeJSON(_isActive,time);
     client.println(msg);
     Serial.println("Sent: " + msg);
   }
@@ -216,10 +221,11 @@ void pirState(){
       calmState = false;
       //send a message to the server that we have moved from calm state
       Serial.print("motion detected at ");
-      Serial.print((millis())/1000);
+      String sec = (String)((millis())/1000);
+      Serial.print(sec);
       Serial.println(" sec"); 
       //send to server
-      notifyStateChange(true);
+      notifyStateChange(true,sec);
       //we sent a message so reset the check in time
       lastCheck = millis();
       delay(50);
@@ -240,10 +246,11 @@ void pirState(){
          //a new motion sequence has been detected
          calmState = true;                        
          Serial.print("motion ended at ");      //output
-         Serial.print((millis() - pause)/1000);
+         String sec = (String) ((millis() - pause)/1000);
+         Serial.print(sec);
          Serial.println(" sec");
          //alert server to have moved back to a calm state
-         notifyStateChange(false);
+         notifyStateChange(false,sec);
          delay(50);
       }
     }
