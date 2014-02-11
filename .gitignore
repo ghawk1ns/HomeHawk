@@ -1,5 +1,6 @@
 #Parse Keys & Server Info
 congiguration.py
+*.properties
 
 # built application files
 *.apk
