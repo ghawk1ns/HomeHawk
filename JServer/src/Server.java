@@ -1,3 +1,5 @@
+
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -17,7 +19,14 @@ public class Server {
     public static void main(String[] args) {
         int i=0;
 
+
         try{
+
+
+
+
+
+
             ServerSocket listener = new ServerSocket(port);
             Socket server;
 

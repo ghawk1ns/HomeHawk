@@ -1,9 +1,8 @@
+import DataObjects.ClientData;
 import com.google.gson.Gson;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Random;
-import java.util.Scanner;
 
 /**
  * Guy Hawkins
@@ -49,18 +48,26 @@ class Connection implements Runnable {
 
             ClientData data;
             try{
+                //make sense of the data
                 data = new Gson().fromJson(messageString, ClientData.class);
-                // Show it.
-                System.out.println("Overall message is:" + data + "\n");
-                out.println("Overall message is:" + data);
-
+                //is this device checking in?
+                if(data.checkingIn()){
+                    System.out.println(data.getName() + " is checking in");
+                }
+                else{
+                    //
+                    System.out.println("Overall message is:" + data);
+                    out.println("Overall message is:" + data);
+                }
             }
             catch (Exception e){
                 String m =  invalidMessage[Min + (int)(Math.random() * ((Max - Min) + 1))];
-                System.out.print(m + "\n");
+                System.out.println(m);
+                System.out.println(messageString);
                 out.println(m);
             }
             //close things
+            System.out.println("closing connection...\n");
             in.close();
             server.close();
 
