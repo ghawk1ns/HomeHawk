@@ -1,8 +1,11 @@
 import DataObjects.ClientData;
+
 import com.google.gson.Gson;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Guy Hawkins
@@ -11,11 +14,15 @@ import java.net.Socket;
  * email - texasgh@gmail.com
  */
 class Connection implements Runnable {
+
+
     private Socket server;
     private String dataString,messageString;
     boolean end = false;
     byte[] messageByte = new byte[1000];
-
+    //parse client data members
+    private static final String LAST_CHECK_IN = "lastCheckIn";
+    private static final String NUM_CHECK_INS= "numCheckIns";
 
     String[] invalidMessage = {"Ah ah ah, you didn't say the magic word","Invalid","Better luck next time"};
     int Min = 0;
@@ -52,6 +59,8 @@ class Connection implements Runnable {
                 data = new Gson().fromJson(messageString, ClientData.class);
                 //is this device checking in?
                 if(data.checkingIn()){
+                    //checkIn
+                    updateClientCheckIn(data);
                     System.out.println(data.getName() + " is checking in");
                 }
                 else{
@@ -75,5 +84,14 @@ class Connection implements Runnable {
             System.out.println("IOException on socket listen: " + ioe);
             ioe.printStackTrace();
         }
+    }
+
+
+    /*
+    Queries parse for the client given its objectId and updates the number of times it has checked in
+     */
+    private void updateClientCheckIn(ClientData data)
+    {
+
     }
 }

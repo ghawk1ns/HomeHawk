@@ -1,32 +1,77 @@
-import almonds.Parse;
-import almonds.ParseObject;
+import almonds.*;
+
+import java.io.*;
+import java.util.Properties;
+
 
 class testParse {
 
+    //parse client data members
+    private static final String LAST_CHECK_IN = "lastCheckIn";
+    private static final String NUM_CHECK_INS= "numCheckIns";
 
 
     public static void main(String[] args) throws Exception {
+        init();
+        String cId = "RvMQuSPEDk";
+//        updateClientCheckIn(cId);
 
 
-        String applicationID = "lbLnibkvLvqaVCVP5BaGwt2rQsNtCBJaJK9gei3R";
-//        String clientKey = "JE55W3ahRxtuSwPtQ18ABx86XrumaMYeDluBysp5"   ;
-//        String masterKey = "igoJn4FHDc5Dbln63tRvbaUingQCT6L0Ahw1CL8G"  ;
-        String restAPIKey = "RC12pLvbmMLXqad12OVOMsK4EaQ8fOBMZj3iC9rx";
+        ParsePushNotification pn = new ParsePushNotification();
 
-        Parse.initialize(applicationID, restAPIKey);
+        pn.pushInBackground(cId, "Warning from sensor A", new SaveCallback()
+        {
+            @Override
+            public void done(ParseException e)
+            {
+                System.out.println("lol");
+            }
+        });
 
-//        ParseObject testObject = new ParseObject("TestObject");
-//        testObject.put("foo", "bar");
-//        testObject.saveInBackground();
+    }
+
+    private static void updateClientCheckIn(String id)
+    {
+        try {
+            ParseQuery pq = new ParseQuery("Client");
+            ParseObject po = pq.get(id);
+            po.save();
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
 
+    //initialize server and backend
+    private static void init(){
+        InputStream input = null;
+        try {
+            input = new FileInputStream("config.properties");
+            Properties properties = new Properties();
+            properties.load(input);
+            //load parse information
+            String _aID = properties.getProperty("applicationID");
+            String _rID = properties.getProperty("restAPIKey");
+            //initialize parse
+            Parse.initialize(_aID,_rID);
 
-
-
-
-
-
-
+            //server properties
+        } catch (IOException ex) {
+            System.out.print("Failed to configure");
+            ex.printStackTrace();
+            System.exit(-1);
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    System.out.print("Failed to close");
+                    e.printStackTrace();
+                    System.exit(-1);
+                }
+            }
+        }
     }
 
 

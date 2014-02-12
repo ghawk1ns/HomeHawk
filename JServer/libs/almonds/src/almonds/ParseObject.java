@@ -1,6 +1,7 @@
 package almonds;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 
@@ -123,13 +124,14 @@ public class ParseObject
 					 * Check for special fields, createdAt and updatedAt, which
 					 * will be formatted and stored as Dates.
 					 */
-					if (name.equals(FIELD_CREATED_AT) || name.equals(FIELD_UPDATED_AT))
-					{
-						value = javax.xml.bind.DatatypeConverter.parseDateTime((String) value)
-								.getTime();
-					}
+//					if (name.equals(FIELD_CREATED_AT) || name.equals(FIELD_UPDATED_AT))
+//					{
+//						value = javax.xml.bind.DatatypeConverter.parseDateTime((String) value)
+//								.getTime();
+//                    }
+//
+                    put(name, value);
 
-					put(name, value);
 				}
 			}
 			catch (JSONException e)
@@ -455,8 +457,13 @@ public class ParseObject
 			httppost.addHeader("X-Parse-REST-API-Key", Parse.getRestAPIKey());
 			httppost.addHeader("Content-Type", "application/json");
 
-			httppost.setEntity(new StringEntity(toJSONObject().toString()));
-			HttpResponse httpresponse = httpclient.execute(httppost);
+            String str = toJSONObject().toString();
+
+			StringEntity res =  new StringEntity(str);
+
+            httppost.setEntity(res);
+
+            HttpResponse httpresponse = httpclient.execute(httppost);
 
 			ParseResponse response = new ParseResponse(httpresponse);
 
@@ -570,7 +577,15 @@ public class ParseObject
 		try
 		{
 			for (String key : mData.keySet())
-				jo.put(key, get(key));
+
+                if (key.equals(FIELD_CREATED_AT) || key.equals(FIELD_UPDATED_AT))
+				{
+						//do nothing
+                }
+                else{
+                    jo.put(key, get(key));
+                }
+
 		}
 		catch (JSONException e)
 		{
