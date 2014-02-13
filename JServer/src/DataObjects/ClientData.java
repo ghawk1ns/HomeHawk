@@ -34,9 +34,15 @@ public class ClientData {
     }
 
     public String getName() {
-
         return headerId+clientId+sensorId;
+    }
 
+
+    public boolean isActive(){
+        if(sensorData == null){
+            return false;
+        }
+        return sensorData.isActive();
     }
 
 }

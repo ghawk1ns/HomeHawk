@@ -1,5 +1,8 @@
 import DataObjects.ClientData;
 
+import almonds.ParseException;
+import almonds.ParsePushNotification;
+import almonds.SaveCallback;
 import com.google.gson.Gson;
 
 import java.io.*;
@@ -60,13 +63,31 @@ class Connection implements Runnable {
                 //is this device checking in?
                 if(data.checkingIn()){
                     //checkIn
-                    updateClientCheckIn(data);
                     System.out.println(data.getName() + " is checking in");
                 }
                 else{
                     //
-                    System.out.println("Overall message is:" + data);
-                    out.println("Overall message is:" + data);
+//                    System.out.println("Overall message is:" + data);
+//                    out.println("Overall message is:" + data);
+                    if(data.isActive()){
+                        ParsePushNotification pushNotification = new ParsePushNotification();
+                        pushNotification.pushInBackground(data.getClientId(),"Sensor is Active",new SaveCallback()
+                        {
+                            @Override
+                            public void done(ParseException e)
+                            {
+                                if(e != null){
+                                    System.out.println(e.getMessage());
+                                    e.printStackTrace();
+                                }
+                                else{
+                                    System.out.println("Push Notification sent");
+                                }
+
+                            }
+                        });
+
+                    }
                 }
             }
             catch (Exception e){

@@ -1,6 +1,8 @@
 
 
 
+import almonds.Parse;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -53,7 +55,7 @@ public class Server {
             String _aID = properties.getProperty("applicationID");
             String _rID = properties.getProperty("restAPIKey");
             //initialize parse
-            //Parse.initialize(_aID, _rID);
+            Parse.initialize(_aID, _rID);
             //server properties
             port = Integer.parseInt(properties.getProperty("port"));
             maxConnections = Integer.parseInt(properties.getProperty("maxConnections"));

@@ -18,7 +18,7 @@ public class ParsePushNotification
 {
 
 
-    public void push(String channel, String message) throws ParseException
+    public static void push(String channel, String message) throws ParseException
     {
         try
         {
@@ -55,7 +55,7 @@ public class ParsePushNotification
                     throw response.getException();
                 }
                 //print out result!
-                System.out.println(jsonResponse.toString());
+                //System.out.println(jsonResponse.toString());
             }
             else
             {
@@ -119,7 +119,7 @@ public class ParsePushNotification
     }
 
     /**
-     * Saves this object to the server in a background thread. This is
+     * initiates a push notification to the server in a background thread. This is
      * preferable to using save(), unless your code is already running from a
      * background thread.
      *
@@ -133,7 +133,7 @@ public class ParsePushNotification
     }
 
     /**
-     * Saves this object to the server in a background thread. Use this when you
+     * Initiates a push notification in a background thread. Use this when you
      * do not have code to run on completion of the push.
      */
     public void pushInBackground(String ch, String m)

@@ -5,7 +5,7 @@ package DataObjects;
  */
 public class SensorData{
 
-    private boolean isActive;
+    private boolean isActive = false;
     private String time;
 
     public void setIsActive(boolean isActive){this.isActive = isActive;}

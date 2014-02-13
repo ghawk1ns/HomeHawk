@@ -14,17 +14,19 @@ class testParse {
     public static void main(String[] args) throws Exception {
         init();
         String cId = "RvMQuSPEDk";
-//        updateClientCheckIn(cId);
-
-
         ParsePushNotification pn = new ParsePushNotification();
-
         pn.pushInBackground(cId, "Warning from sensor A", new SaveCallback()
         {
             @Override
             public void done(ParseException e)
             {
-                System.out.println("lol");
+                if(e != null){
+                    e.printStackTrace();
+                }
+                else{
+                    System.out.println("Push Notification sent");
+                }
+
             }
         });
 
