@@ -38,6 +38,15 @@ public class ParsePushNotification
                         "}" +
                     "}";
 
+//            String entity =
+//                    "{" +
+//                            "\"channels\":[], " +
+//                            "\"data\": {" +
+//                            "\"alert\":\""+message+"\"" +
+//                            "}" +
+//                            "}";
+
+
             StringEntity res =  new StringEntity(entity);
 
             httppost.setEntity(res);

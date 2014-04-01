@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "Home Hawk": {
+            "applicationId": "lbLnibkvLvqaVCVP5BaGwt2rQsNtCBJaJK9gei3R", 
+            "masterKey": "igoJn4FHDc5Dbln63tRvbaUingQCT6L0Ahw1CL8G"
+        }, 
+        "_default": {
+            "link": "Home Hawk"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.16"
+    }
+}
