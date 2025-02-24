@@ -1,8 +1,8 @@
 {
     "applications": {
         "Home Hawk": {
-            "applicationId": "lbLnibkvLvqaVCVP5BaGwt2rQsNtCBJaJK9gei3R", 
-            "masterKey": "igoJn4FHDc5Dbln63tRvbaUingQCT6L0Ahw1CL8G"
+            "applicationId": "", 
+            "masterKey": ""
         }, 
         "_default": {
             "link": "Home Hawk"
